@@ -1,0 +1,374 @@
+<<<<<<<< HEAD:index.html.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CardCraft — Interactive Card Maker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f3f8;color:#24202a}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #e8e2ee;padding:14px 5%;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:900;color:#8d3cff}.logo span{color:#ff4d7d}
+button{border:0;border-radius:11px;padding:12px 17px;font-weight:800;cursor:pointer;transition:.2s}
+button:hover{transform:translateY(-2px)}.primary{background:#8d3cff;color:white}.secondary{background:#eee8f2;color:#29242e}
+.hero{text-align:center;padding:55px 18px 40px;background:linear-gradient(135deg,#fff,#f1e9ff)}
+.hero h1{font-size:clamp(35px,6vw,62px);margin:0 0 12px}.hero h1 span{color:#8d3cff}.hero p{color:#666;font-size:18px}
+.wrap{max-width:1250px;margin:35px auto;padding:0 18px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.templates{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:18px}
+.template{background:white;border:2px solid transparent;border-radius:16px;padding:11px;cursor:pointer;box-shadow:0 6px 20px #0000000c;transition:.2s}
+.template.active{border-color:#8d3cff}.template:hover{transform:translateY(-4px);border-color:#c8a7ff}
+.thumb{height:145px;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,serif;font-size:21px;line-height:1.5}
+.wedding{background:linear-gradient(135deg,#fff0f5,#ffd4e1);color:#8c3152}.birthday{background:linear-gradient(135deg,#e8f7ff,#c7ecff);color:#12618c}.anniv{background:linear-gradient(135deg,#fff0df,#ffd1a6);color:#984d10}.festival{background:linear-gradient(135deg,#fff8cf,#ffd768);color:#795000}.party{background:linear-gradient(135deg,#eee5ff,#d8c5ff);color:#5b35a1}.baby{background:linear-gradient(135deg,#e9fff9,#c4f1e7);color:#147665}
+.editor{margin-top:40px;display:grid;grid-template-columns:350px 1fr;gap:22px;align-items:start}.panel,.preview{background:#fff;border-radius:19px;padding:21px;box-shadow:0 8px 28px #0000000c}.panel h2,.preview h2{margin-top:0}
+.field{margin:13px 0}.field label{display:block;font-size:13px;font-weight:800;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;font:inherit}.field textarea{min-height:75px;resize:vertical}
+.colors{display:flex;gap:8px;flex-wrap:wrap}.colorBtn{width:34px;height:34px;padding:0;border:3px solid white;box-shadow:0 0 0 1px #bbb;border-radius:50%}.colorBtn.selected{box-shadow:0 0 0 3px #8d3cff}
+.card-area{display:flex;justify-content:center;padding:12px}.card{width:min(100%,620px);aspect-ratio:1.5;border-radius:20px;padding:45px 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 15px 40px #0002;border:9px solid #fff;transition:.35s;position:relative;overflow:hidden}
+.card:before,.card:after{content:"✦";position:absolute;font-size:70px;opacity:.12;font-family:Georgia}.card:before{top:12px;left:20px}.card:after{bottom:0;right:20px}
+.card .small{font-size:14px;letter-spacing:2px;text-transform:uppercase}.card h2{font-family:Georgia,serif;font-size:clamp(28px,5vw,53px);margin:13px 0 6px}.card h3{font-family:Georgia,serif;font-size:24px;margin:8px}.card p{max-width:470px;line-height:1.55;margin:7px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.status{font-size:13px;color:#666;margin-top:10px;min-height:18px}
+#photoPreview{max-width:100px;max-height:100px;border-radius:50%;object-fit:cover;display:none;margin-bottom:10px;border:4px solid white;box-shadow:0 2px 12px #0003}
+footer{text-align:center;padding:35px;color:#777}
+@media(max-width:820px){.editor{grid-template-columns:1fr}.preview{order:-1}}
+</style>
+</head>
+<body>
+<header><div class="logo">Card<span>Craft</span> ✨</div><button class="primary" id="createBtn">Create Card</button></header>
+
+<section class="hero">
+<h1>Design Your <span>Perfect Card</span></h1>
+<p>Pick a template, edit the details and watch your card update instantly.</p>
+</section>
+
+<main class="wrap">
+<div class="section-title"><h2>Choose a template</h2><span id="templateInfo">4 templates available</span></div>
+<div class="templates" id="templates">
+<div class="template active" data-type="wedding"><div class="thumb wedding">💍<br>Wedding Invitation</div></div>
+<div class="template" data-type="birthday"><div class="thumb birthday">🎂<br>Birthday</div></div>
+<div class="template" data-type="anniv"><div class="thumb anniv">💕<br>Anniversary</div></div>
+<div class="template" data-type="festival"><div class="thumb festival">🪔<br>Festival Greeting</div></div>
+<div class="template" data-type="party"><div class="thumb party">🎉<br>Party Invitation</div></div>
+<div class="template" data-type="baby"><div class="thumb baby">👶<br>Baby Shower</div></div>
+</div>
+
+<section class="editor" id="editor">
+<div class="panel">
+<h2>Customize</h2>
+<div class="field"><label>Card type</label><select id="type">
+<option value="wedding">Wedding Invitation</option><option value="birthday">Birthday Celebration</option>
+<option value="anniv">Anniversary Celebration</option><option value="festival">Festival Greeting</option>
+<option value="party">Party Invitation</option><option value="baby">Baby Shower</option>
+</select></div>
+<div class="field"><label>Name / Title</label><input id="name" value="Aarav & Ananya"></div>
+<div class="field"><label>Date</label><input id="date" type="date"></div>
+<div class="field"><label>Time</label><input id="time" type="time"></div>
+<div class="field"><label>Venue</label><input id="venue" value="Royal Palace, Pune"></div>
+<div class="field"><label>Message</label><textarea id="message">We warmly invite you to celebrate this special day with us.</textarea></div>
+<div class="field"><label>Upload a photo</label><input id="photo" type="file" accept="image/*"><small>Photo stays in your browser.</small></div>
+<div class="field"><label>Card color</label>
+<div class="colors" id="colors">
+<button type="button" class="colorBtn selected" data-color="#fff0f5" style="background:#fff0f5"></button>
+<button type="button" class="colorBtn" data-color="#e8f7ff" style="background:#e8f7ff"></button>
+<button type="button" class="colorBtn" data-color="#fff0df" style="background:#fff0df"></button>
+<button type="button" class="colorBtn" data-color="#fff8cf" style="background:#fff8cf"></button>
+<button type="button" class="colorBtn" data-color="#eee5ff" style="background:#eee5ff"></button>
+<button type="button" class="colorBtn" data-color="#e9fff9" style="background:#e9fff9"></button>
+</div></div>
+<div class="actions"><button class="primary" id="downloadBtn">Download PNG</button><button class="secondary" id="shareBtn">Share</button><button class="secondary" id="resetBtn">Reset</button></div>
+<div class="status" id="status" aria-live="polite"></div>
+</div>
+
+<div class="preview">
+<h2>Live Preview</h2>
+<div class="card-area">
+<div class="card" id="card">
+<img id="photoPreview" alt="Uploaded card photo">
+<div class="small" id="cardType">Wedding Invitation</div>
+<h2 id="cardName">Aarav & Ananya</h2>
+<h3 id="cardDate">Your special day</h3>
+<p id="cardVenue">Royal Palace, Pune</p>
+<p id="cardMessage">We warmly invite you to celebrate this special day with us.</p>
+<p id="cardTime"></p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer>© 2026 CardCraft • Create • Customize • Celebrate</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const labels={wedding:"Wedding Invitation",birthday:"Birthday Celebration",anniv:"Anniversary Celebration",festival:"Festival Greeting",party:"Party Invitation",baby:"Baby Shower"};
+const defaults={
+ wedding:["Aarav & Ananya","Royal Palace, Pune","We warmly invite you to celebrate this special day with us."],
+ birthday:["Happy Birthday!","Celebration Hall","Come and celebrate this special day with us!"],
+ anniv:["Aarav & Ananya","Our Favorite Place","Celebrating another beautiful year together."],
+ festival:["Happy Festival!","With Family & Friends","Wishing you happiness, peace and lots of beautiful moments."],
+ party:["You're Invited!","Party House","Let's make some unforgettable memories together!"],
+ baby:["Welcome Baby!","Family Hall","Join us to celebrate the upcoming arrival of our little one."]
+};
+
+function update(){
+ const type=$("type").value,d=$("date").value;
+ $("cardType").textContent=labels[type];
+ $("cardName").textContent=$("name").value.trim()||"Your Name";
+ $("cardDate").textContent=d?new Date(d+"T00:00:00Z").toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"}):"Your special day";
+ $("cardVenue").textContent=$("venue").value.trim()||"Your Venue";
+ $("cardMessage").textContent=$("message").value.trim()||"Your message";
+ $("cardTime").textContent=$("time").value?"Time: "+$("time").value:"";
+}
+
+$("templates").addEventListener("click",e=>{
+ const item=e.target.closest(".template"); if(!item)return;
+ document.querySelectorAll(".template").forEach(x=>x.classList.remove("active"));item.classList.add("active");
+ const type=item.dataset.type;$("type").value=type;
+ $("name").value=defaults[type][0];$("venue").value=defaults[type][1];$("message").value=defaults[type][2];
+ update();$("editor").scrollIntoView({behavior:"smooth"});
+});
+["type","name","date","time","venue","message"].forEach(id=>$(id).addEventListener("input",update));
+
+$("colors").addEventListener("click",e=>{
+ const b=e.target.closest(".colorBtn");if(!b)return;
+ document.querySelectorAll(".colorBtn").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");
+ $("card").style.background=b.dataset.color;
+});
+
+$("photo").addEventListener("change",e=>{
+ const file=e.target.files[0];if(!file)return;
+ if(file.size>5*1024*1024){$("status").textContent="Please choose an image under 5 MB.";e.target.value="";return;}
+ const reader=new FileReader();
+ reader.onload=()=>{$("photoPreview").src=reader.result;$("photoPreview").style.display="block";};
+ reader.readAsDataURL(file);
+});
+
+$("resetBtn").addEventListener("click",()=>{
+ $("type").value="wedding";$("name").value="Aarav & Ananya";$("date").value="";$("time").value="";
+ $("venue").value="Royal Palace, Pune";$("message").value=defaults.wedding[2];$("photo").value="";
+ $("photoPreview").style.display="none";$("card").style.background="#fff0f5";
+ document.querySelectorAll(".colorBtn").forEach(x=>x.classList.remove("selected"));document.querySelector(".colorBtn").classList.add("selected");
+ update();$("status").textContent="Card reset.";
+});
+
+async function loadCanvas(){
+ try{return await import("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm");}catch(e){return null;}
+}
+$("downloadBtn").addEventListener("click",async()=>{
+ $("status").textContent="Preparing your PNG...";
+ const mod=await loadCanvas();
+ if(!mod){$("status").textContent="PNG library could not load. Please check your internet connection.";return;}
+ try{
+  const canvas=await mod.default($("card"),{scale:2,useCORS:true,backgroundColor:null});
+  const a=document.createElement("a");a.download="cardcraft-card.png";a.href=canvas.toDataURL("image/png");a.click();
+  $("status").textContent="Downloaded! 🎉";
+ }catch(e){$("status").textContent="Could not create the PNG. Try again.";}
+});
+
+$("shareBtn").addEventListener("click",async()=>{
+ const text=$("cardName").textContent+" — "+$("cardType").textContent+" at "+$("cardVenue").textContent;
+ if(navigator.share){try{await navigator.share({title:"My CardCraft Card",text});$("status").textContent="Share menu opened.";}catch(e){}}
+ else{$("status").textContent="Sharing isn't supported here. Copy this: "+text;}
+});
+$("createBtn").addEventListener("click",()=>$("editor").scrollIntoView({behavior:"smooth"}));
+update();
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2991495691809253"
+     crossorigin="anonymous"></script>
+<!-- banner ad -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-2991495691809253"
+     data-ad-slot="7295064838"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</body>
+========
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2991495691809253"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CardCraft — Interactive Card Maker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f3f8;color:#24202a}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #e8e2ee;padding:14px 5%;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:25px;font-weight:900;color:#8d3cff}.logo span{color:#ff4d7d}
+button{border:0;border-radius:11px;padding:12px 17px;font-weight:800;cursor:pointer;transition:.2s}
+button:hover{transform:translateY(-2px)}.primary{background:#8d3cff;color:white}.secondary{background:#eee8f2;color:#29242e}
+.hero{text-align:center;padding:55px 18px 40px;background:linear-gradient(135deg,#fff,#f1e9ff)}
+.hero h1{font-size:clamp(35px,6vw,62px);margin:0 0 12px}.hero h1 span{color:#8d3cff}.hero p{color:#666;font-size:18px}
+.wrap{max-width:1250px;margin:35px auto;padding:0 18px}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.templates{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:18px}
+.template{background:white;border:2px solid transparent;border-radius:16px;padding:11px;cursor:pointer;box-shadow:0 6px 20px #0000000c;transition:.2s}
+.template.active{border-color:#8d3cff}.template:hover{transform:translateY(-4px);border-color:#c8a7ff}
+.thumb{height:145px;border-radius:12px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Georgia,serif;font-size:21px;line-height:1.5}
+.wedding{background:linear-gradient(135deg,#fff0f5,#ffd4e1);color:#8c3152}.birthday{background:linear-gradient(135deg,#e8f7ff,#c7ecff);color:#12618c}.anniv{background:linear-gradient(135deg,#fff0df,#ffd1a6);color:#984d10}.festival{background:linear-gradient(135deg,#fff8cf,#ffd768);color:#795000}.party{background:linear-gradient(135deg,#eee5ff,#d8c5ff);color:#5b35a1}.baby{background:linear-gradient(135deg,#e9fff9,#c4f1e7);color:#147665}
+.editor{margin-top:40px;display:grid;grid-template-columns:350px 1fr;gap:22px;align-items:start}.panel,.preview{background:#fff;border-radius:19px;padding:21px;box-shadow:0 8px 28px #0000000c}.panel h2,.preview h2{margin-top:0}
+.field{margin:13px 0}.field label{display:block;font-size:13px;font-weight:800;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;padding:11px;border:1px solid #ddd;border-radius:9px;font:inherit}.field textarea{min-height:75px;resize:vertical}
+.colors{display:flex;gap:8px;flex-wrap:wrap}.colorBtn{width:34px;height:34px;padding:0;border:3px solid white;box-shadow:0 0 0 1px #bbb;border-radius:50%}.colorBtn.selected{box-shadow:0 0 0 3px #8d3cff}
+.card-area{display:flex;justify-content:center;padding:12px}.card{width:min(100%,620px);aspect-ratio:1.5;border-radius:20px;padding:45px 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 15px 40px #0002;border:9px solid #fff;transition:.35s;position:relative;overflow:hidden}
+.card:before,.card:after{content:"✦";position:absolute;font-size:70px;opacity:.12;font-family:Georgia}.card:before{top:12px;left:20px}.card:after{bottom:0;right:20px}
+.card .small{font-size:14px;letter-spacing:2px;text-transform:uppercase}.card h2{font-family:Georgia,serif;font-size:clamp(28px,5vw,53px);margin:13px 0 6px}.card h3{font-family:Georgia,serif;font-size:24px;margin:8px}.card p{max-width:470px;line-height:1.55;margin:7px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.status{font-size:13px;color:#666;margin-top:10px;min-height:18px}
+#photoPreview{max-width:100px;max-height:100px;border-radius:50%;object-fit:cover;display:none;margin-bottom:10px;border:4px solid white;box-shadow:0 2px 12px #0003}
+footer{text-align:center;padding:35px;color:#777}
+@media(max-width:820px){.editor{grid-template-columns:1fr}.preview{order:-1}}
+</style>
+</head>
+<body>
+<header><div class="logo">Card<span>Craft</span> ✨</div><button class="primary" id="createBtn">Create Card</button></header>
+
+<section class="hero">
+<h1>Design Your <span>Perfect Card</span></h1>
+<p>Pick a template, edit the details and watch your card update instantly.</p>
+</section>
+
+<main class="wrap">
+<div class="section-title"><h2>Choose a template</h2><span id="templateInfo">4 templates available</span></div>
+<div class="templates" id="templates">
+<div class="template active" data-type="wedding"><div class="thumb wedding">💍<br>Wedding Invitation</div></div>
+<div class="template" data-type="birthday"><div class="thumb birthday">🎂<br>Birthday</div></div>
+<div class="template" data-type="anniv"><div class="thumb anniv">💕<br>Anniversary</div></div>
+<div class="template" data-type="festival"><div class="thumb festival">🪔<br>Festival Greeting</div></div>
+<div class="template" data-type="party"><div class="thumb party">🎉<br>Party Invitation</div></div>
+<div class="template" data-type="baby"><div class="thumb baby">👶<br>Baby Shower</div></div>
+</div>
+
+<section class="editor" id="editor">
+<div class="panel">
+<h2>Customize</h2>
+<div class="field"><label>Card type</label><select id="type">
+<option value="wedding">Wedding Invitation</option><option value="birthday">Birthday Celebration</option>
+<option value="anniv">Anniversary Celebration</option><option value="festival">Festival Greeting</option>
+<option value="party">Party Invitation</option><option value="baby">Baby Shower</option>
+</select></div>
+<div class="field"><label>Name / Title</label><input id="name" value="Aarav & Ananya"></div>
+<div class="field"><label>Date</label><input id="date" type="date"></div>
+<div class="field"><label>Time</label><input id="time" type="time"></div>
+<div class="field"><label>Venue</label><input id="venue" value="Royal Palace, Pune"></div>
+<div class="field"><label>Message</label><textarea id="message">We warmly invite you to celebrate this special day with us.</textarea></div>
+<div class="field"><label>Upload a photo</label><input id="photo" type="file" accept="image/*"><small>Photo stays in your browser.</small></div>
+<div class="field"><label>Card color</label>
+<div class="colors" id="colors">
+<button type="button" class="colorBtn selected" data-color="#fff0f5" style="background:#fff0f5"></button>
+<button type="button" class="colorBtn" data-color="#e8f7ff" style="background:#e8f7ff"></button>
+<button type="button" class="colorBtn" data-color="#fff0df" style="background:#fff0df"></button>
+<button type="button" class="colorBtn" data-color="#fff8cf" style="background:#fff8cf"></button>
+<button type="button" class="colorBtn" data-color="#eee5ff" style="background:#eee5ff"></button>
+<button type="button" class="colorBtn" data-color="#e9fff9" style="background:#e9fff9"></button>
+</div></div>
+<div class="actions"><button class="primary" id="downloadBtn">Download PNG</button><button class="secondary" id="shareBtn">Share</button><button class="secondary" id="resetBtn">Reset</button></div>
+<div class="status" id="status" aria-live="polite"></div>
+</div>
+
+<div class="preview">
+<h2>Live Preview</h2>
+<div class="card-area">
+<div class="card" id="card">
+<img id="photoPreview" alt="Uploaded card photo">
+<div class="small" id="cardType">Wedding Invitation</div>
+<h2 id="cardName">Aarav & Ananya</h2>
+<h3 id="cardDate">Your special day</h3>
+<p id="cardVenue">Royal Palace, Pune</p>
+<p id="cardMessage">We warmly invite you to celebrate this special day with us.</p>
+<p id="cardTime"></p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer>© 2026 CardCraft • Create • Customize • Celebrate</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const labels={wedding:"Wedding Invitation",birthday:"Birthday Celebration",anniv:"Anniversary Celebration",festival:"Festival Greeting",party:"Party Invitation",baby:"Baby Shower"};
+const defaults={
+ wedding:["Aarav & Ananya","Royal Palace, Pune","We warmly invite you to celebrate this special day with us."],
+ birthday:["Happy Birthday!","Celebration Hall","Come and celebrate this special day with us!"],
+ anniv:["Aarav & Ananya","Our Favorite Place","Celebrating another beautiful year together."],
+ festival:["Happy Festival!","With Family & Friends","Wishing you happiness, peace and lots of beautiful moments."],
+ party:["You're Invited!","Party House","Let's make some unforgettable memories together!"],
+ baby:["Welcome Baby!","Family Hall","Join us to celebrate the upcoming arrival of our little one."]
+};
+
+function update(){
+ const type=$("type").value,d=$("date").value;
+ $("cardType").textContent=labels[type];
+ $("cardName").textContent=$("name").value.trim()||"Your Name";
+ $("cardDate").textContent=d?new Date(d+"T00:00:00Z").toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"}):"Your special day";
+ $("cardVenue").textContent=$("venue").value.trim()||"Your Venue";
+ $("cardMessage").textContent=$("message").value.trim()||"Your message";
+ $("cardTime").textContent=$("time").value?"Time: "+$("time").value:"";
+}
+
+$("templates").addEventListener("click",e=>{
+ const item=e.target.closest(".template"); if(!item)return;
+ document.querySelectorAll(".template").forEach(x=>x.classList.remove("active"));item.classList.add("active");
+ const type=item.dataset.type;$("type").value=type;
+ $("name").value=defaults[type][0];$("venue").value=defaults[type][1];$("message").value=defaults[type][2];
+ update();$("editor").scrollIntoView({behavior:"smooth"});
+});
+["type","name","date","time","venue","message"].forEach(id=>$(id).addEventListener("input",update));
+
+$("colors").addEventListener("click",e=>{
+ const b=e.target.closest(".colorBtn");if(!b)return;
+ document.querySelectorAll(".colorBtn").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");
+ $("card").style.background=b.dataset.color;
+});
+
+$("photo").addEventListener("change",e=>{
+ const file=e.target.files[0];if(!file)return;
+ if(file.size>5*1024*1024){$("status").textContent="Please choose an image under 5 MB.";e.target.value="";return;}
+ const reader=new FileReader();
+ reader.onload=()=>{$("photoPreview").src=reader.result;$("photoPreview").style.display="block";};
+ reader.readAsDataURL(file);
+});
+
+$("resetBtn").addEventListener("click",()=>{
+ $("type").value="wedding";$("name").value="Aarav & Ananya";$("date").value="";$("time").value="";
+ $("venue").value="Royal Palace, Pune";$("message").value=defaults.wedding[2];$("photo").value="";
+ $("photoPreview").style.display="none";$("card").style.background="#fff0f5";
+ document.querySelectorAll(".colorBtn").forEach(x=>x.classList.remove("selected"));document.querySelector(".colorBtn").classList.add("selected");
+ update();$("status").textContent="Card reset.";
+});
+
+async function loadCanvas(){
+ try{return await import("https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm");}catch(e){return null;}
+}
+$("downloadBtn").addEventListener("click",async()=>{
+ $("status").textContent="Preparing your PNG...";
+ const mod=await loadCanvas();
+ if(!mod){$("status").textContent="PNG library could not load. Please check your internet connection.";return;}
+ try{
+  const canvas=await mod.default($("card"),{scale:2,useCORS:true,backgroundColor:null});
+  const a=document.createElement("a");a.download="cardcraft-card.png";a.href=canvas.toDataURL("image/png");a.click();
+  $("status").textContent="Downloaded! 🎉";
+ }catch(e){$("status").textContent="Could not create the PNG. Try again.";}
+});
+
+$("shareBtn").addEventListener("click",async()=>{
+ const text=$("cardName").textContent+" — "+$("cardType").textContent+" at "+$("cardVenue").textContent;
+ if(navigator.share){try{await navigator.share({title:"My CardCraft Card",text});$("status").textContent="Share menu opened.";}catch(e){}}
+ else{$("status").textContent="Sharing isn't supported here. Copy this: "+text;}
+});
+$("createBtn").addEventListener("click",()=>$("editor").scrollIntoView({behavior:"smooth"}));
+update();
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2991495691809253"
+     crossorigin="anonymous"></script>
+<!-- banner ad -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-2991495691809253"
+     data-ad-slot="7295064838"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</body>
+>>>>>>>> 613f67a (Rename craftcard to index):index.html
+</html>
